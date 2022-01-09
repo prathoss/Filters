@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace Filters;
@@ -8,16 +9,22 @@ public class NumberFilterModel : FilterModel
     public NumberFilterOptions Type { get; set; }
     public float? Filter { get; set; }
     public float? FilterTo { get; set; }
+    
+    protected static readonly HashSet<Type> AllowedTypes = new()
+    {
+        typeof(byte), typeof(sbyte),
+        typeof(short),typeof(ushort),
+        typeof(int), typeof(uint),
+        typeof(long), typeof(ulong),
+        typeof(float), typeof(double), typeof(decimal)
+    };
 
     public override bool IsValid(MemberExpression prop)
     {
         if (!Filter.HasValue) return false;
 
         //check type of property (number filter can only be applied to int, long, float, double and nullables)
-        if (prop.Type != typeof(int) && prop.Type != typeof(long) && prop.Type != typeof(float) &&
-            prop.Type != typeof(double) &&
-            prop.Type != typeof(int?) && prop.Type != typeof(long?) && prop.Type != typeof(float?) &&
-            prop.Type != typeof(double?))
+        if (!AllowedTypes.Contains(prop.Type) && !AllowedTypes.Contains(Nullable.GetUnderlyingType(prop.Type)))
             return false;
 
         return Type != NumberFilterOptions.InRange || FilterTo.HasValue;

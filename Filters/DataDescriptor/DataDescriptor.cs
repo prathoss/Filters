@@ -9,8 +9,8 @@ namespace Filters.DataDescriptor;
 
 public class DataDescriptor<T> : IDataDescriptor<T>
 {
-    private readonly Dictionary<string, Func<Task<IEnumerable<string>>>> keyAsyncSources = new();
-    private readonly Dictionary<string, Func<IEnumerable<string>>> keySources = new();
+    private readonly Dictionary<string, Func<Task<IEnumerable<string>>>> _keyAsyncSources = new();
+    private readonly Dictionary<string, Func<IEnumerable<string>>> _keySources = new();
 
     public IDataDescriptor<T> SetPropValues(Expression<Func<T, string>> propExpression,
         Func<IEnumerable<string>> setFunc)
@@ -18,7 +18,7 @@ public class DataDescriptor<T> : IDataDescriptor<T>
         var propName = StandardizePropName(GetMemberName(propExpression));
         CheckForDuplicateKeys(propName);
 
-        this.keySources.Add(propName, setFunc);
+        _keySources.Add(propName, setFunc);
 
         return this;
     }
@@ -29,7 +29,7 @@ public class DataDescriptor<T> : IDataDescriptor<T>
         var propName = StandardizePropName(GetMemberName(propExpression));
         CheckForDuplicateKeys(propName);
 
-        this.keyAsyncSources.Add(propName, setFunc);
+        _keyAsyncSources.Add(propName, setFunc);
 
         return this;
     }
@@ -37,9 +37,9 @@ public class DataDescriptor<T> : IDataDescriptor<T>
     public async Task<IEnumerable<string>> Describe(string propName)
     {
         var standardized = StandardizePropName(propName);
-        if (this.keySources.ContainsKey(standardized)) return this.keySources[standardized]();
+        if (_keySources.ContainsKey(standardized)) return _keySources[standardized]();
 
-        if (this.keyAsyncSources.ContainsKey(standardized)) return await this.keyAsyncSources[standardized]();
+        if (_keyAsyncSources.ContainsKey(standardized)) return await _keyAsyncSources[standardized]();
 
         var props = typeof(T).GetProperties();
 
@@ -64,7 +64,7 @@ public class DataDescriptor<T> : IDataDescriptor<T>
 
     private void CheckForDuplicateKeys(string key)
     {
-        if (keySources.ContainsKey(key) || keyAsyncSources.ContainsKey(key))
+        if (_keySources.ContainsKey(key) || _keyAsyncSources.ContainsKey(key))
             throw new ArgumentException($"Duplicate source functions set for property: {key}", key);
     }
 
@@ -75,9 +75,9 @@ public class DataDescriptor<T> : IDataDescriptor<T>
 
     private string GetMemberName<TKey>(Expression<Func<T, TKey>> propExpression)
     {
-        if (!(propExpression.Body is MemberExpression))
+        if (propExpression.Body is not MemberExpression me)
             throw new ArgumentException("Expression must be member expression");
 
-        return ((MemberExpression)propExpression.Body).Member.Name;
+        return me.Member.Name;
     }
 }

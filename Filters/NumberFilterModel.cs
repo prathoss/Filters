@@ -23,7 +23,9 @@ public class NumberFilterModel : FilterModel
     {
         if (!Filter.HasValue) return false;
 
-        //check type of property (number filter can only be applied to int, long, float, double and nullables)
+        if (Type == NumberFilterOptions.InRange && !FilterTo.HasValue) return false;
+
+            //check type of property (number filter can only be applied to int, long, float, double and nullables)
         if (!AllowedTypes.Contains(prop.Type) && !AllowedTypes.Contains(Nullable.GetUnderlyingType(prop.Type)))
             return false;
 

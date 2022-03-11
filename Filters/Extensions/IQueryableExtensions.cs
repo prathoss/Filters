@@ -90,6 +90,6 @@ public static class IQueryableExtensions
 
     internal static void ForEach<TKey, TValue>(this IDictionary<TKey, TValue> dict, Action<TKey, TValue> a)
     {
-        foreach (var kvPair in dict) a(kvPair.Key, kvPair.Value);
+        foreach (var (key, value) in dict) a(key, value);
     }
 }

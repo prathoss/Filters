@@ -1,10 +1,10 @@
-using System.Collections.Generic;
 using System.Linq;
-using Xunit;
 using Filters.Extensions;
+using Filters.Test.Filters.Data;
 using FluentAssertions;
+using Xunit;
 
-namespace Filters.Test;
+namespace Filters.Test.Filters;
 
 public class NumberFilters
 {

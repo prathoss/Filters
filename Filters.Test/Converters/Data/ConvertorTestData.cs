@@ -1,11 +1,11 @@
 using System;
 using Xunit;
 
-namespace Filters.Test;
+namespace Filters.Test.Converters.Data;
 
-public class ConvertorTestData : TheoryData<ConvertorTestRow>
+public class NewtonsoftConverterTestData : TheoryData<ConvertorTestRow>
 {
-	public ConvertorTestData()
+	public NewtonsoftConverterTestData()
 	{
 		Add(
 			new ConvertorTestRow("Number",
@@ -36,8 +36,9 @@ public class ConvertorTestData : TheoryData<ConvertorTestRow>
 		Add(new ConvertorTestRow("Set",
 			@"{
 				""filterType"": ""set"",
-				""type"": ""equals"",
-				""filter"": ""abc""
+				""values"": [
+					""abc""
+				]
 			}",
 			typeof(SetFilterModel))
 		);

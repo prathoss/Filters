@@ -1,0 +1,15 @@
+GET {{host}}/api/Bike/describe?col=type&col=manufacturer
+
+###
+POST {{host}}/api/bike/filter
+Content-Type: application/json
+
+{
+  "type": {
+    "filterType": "set",
+    "values": [
+      "enduro",
+      "trail"
+    ]
+  }
+}
